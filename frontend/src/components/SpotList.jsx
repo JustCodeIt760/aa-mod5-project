@@ -27,6 +27,7 @@ function SpotList() {
             <h2>{spot.name}</h2>
             <p>{spot.city}, {spot.state}</p>
             <p>
+              <span role="img" aria-label="star">⭐</span>
               {spot.avgRating !== null ? spot.avgRating.toFixed(1) : "New"}
             </p>
             <p>${spot.price} per night</p>

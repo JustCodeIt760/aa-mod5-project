@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ProfileButton from './ProfileButton';
 import './Navigation.css';
@@ -10,7 +10,7 @@ function Navigation({ isLoaded }) {
   return (
     <ul>
       <li>
-        <NavLink to="/">Home</NavLink>
+        <Link to="/">Home</Link>
       </li>
       {isLoaded && (
         <React.Fragment>
@@ -20,6 +20,11 @@ function Navigation({ isLoaded }) {
           <li className="navbar-title">
             <h1>Airbnb Clone</h1>
           </li>
+          {sessionUser && (
+            <li>
+              <Link to="/spots/new">Create a New Spot</Link>
+            </li>
+          )}
           <li className="profile-button">
             <ProfileButton user={sessionUser} />
           </li>
