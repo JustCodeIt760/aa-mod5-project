@@ -5,6 +5,7 @@ import Navigation from "./components/Navigation/Navigation";
 import * as sessionActions from "./store/session";
 import SpotList from './components/SpotList';
 import SpotDetail from './components/SpotDetail'; // Import the SpotDetail component
+import CreateSpotForm from './components/CreateSpotForm'; // Import the CreateSpotForm component
 
 function Layout() {
   const dispatch = useDispatch();
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: '/spots/:id', // Add route for spot detail
         element: <SpotDetail />,
+      },
+      {
+        path: '/spots/new', // Add route for creating a new spot
+        element: <CreateSpotForm />,
       },
     ],
   },

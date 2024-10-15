@@ -20,6 +20,11 @@ function Navigation({ isLoaded }) {
           <li className="navbar-title">
             <h1>Airbnb Clone</h1>
           </li>
+          {sessionUser && (
+            <li>
+              <NavLink to="/spots/new">Create a New Spot</NavLink>
+            </li>
+          )}
           <li className="profile-button">
             <ProfileButton user={sessionUser} />
           </li>
