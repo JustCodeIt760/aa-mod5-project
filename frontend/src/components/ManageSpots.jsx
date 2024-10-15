@@ -1,9 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa'; // Import the star icon
+import ConfirmationModal from './ConfirmationModal'; // Ensure this path is correct
+import './ConfirmationModal.css'; // Ensure this path is correct
+
+// Define or import the getCsrfToken function
+function getCsrfToken() {
+  const name = 'XSRF-TOKEN=';
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const cookies = decodedCookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i].trim();
+    if (cookie.indexOf(name) === 0) {
+      return cookie.substring(name.length, cookie.length);
+    }
+  }
+  return '';
+}
 
 function ManageSpots() {
   const [spots, setSpots] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [spotToDelete, setSpotToDelete] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,8 +43,34 @@ function ManageSpots() {
   };
 
   const handleDelete = (spotId) => {
-    // Logic to handle deleting the spot
-    console.log(`Delete spot with ID: ${spotId}`);
+    console.log(`Attempting to delete spot with ID: ${spotId}`); // Debugging line
+    setSpotToDelete(spotId);
+    setShowModal(true);
+  };
+
+  const confirmDelete = async () => {
+    const csrfToken = getCsrfToken(); // Get the CSRF token
+
+    try {
+      const response = await fetch(`/api/spots/${spotToDelete}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken, // Include CSRF token in headers
+        },
+      });
+      if (response.ok) {
+        console.log(`Spot with ID: ${spotToDelete} deleted successfully`); // Debugging line
+        setSpots(spots.filter(spot => spot.id !== spotToDelete));
+      } else {
+        console.error('Failed to delete spot');
+      }
+    } catch (error) {
+      console.error('Error deleting spot:', error);
+    } finally {
+      setShowModal(false);
+      setSpotToDelete(null);
+    }
   };
 
   return (
@@ -58,6 +102,12 @@ function ManageSpots() {
           <p>You have not created any spots yet.</p>
           <Link to="/spots/new">Create a New Spot</Link>
         </div>
+      )}
+      {showModal && (
+        <ConfirmationModal
+          onClose={() => setShowModal(false)}
+          onConfirm={confirmDelete}
+        />
       )}
     </div>
   );
