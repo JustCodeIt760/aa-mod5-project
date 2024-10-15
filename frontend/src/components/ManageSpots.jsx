@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa'; // Import the star icon
 
 function ManageSpots() {
   const [spots, setSpots] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserSpots = async () => {
@@ -20,8 +21,7 @@ function ManageSpots() {
   }, []);
 
   const handleUpdate = (spotId) => {
-    // Logic to handle updating the spot
-    console.log(`Update spot with ID: ${spotId}`);
+    navigate(`/spots/${spotId}/edit`);
   };
 
   const handleDelete = (spotId) => {
