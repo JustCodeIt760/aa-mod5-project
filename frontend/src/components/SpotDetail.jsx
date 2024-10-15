@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FaStar } from 'react-icons/fa';
-import ReviewFormModal from './ReviewFormModal'; // Import the modal component
+import { FaStar } from 'react-icons/fa'; // Import FaStar
+import ReviewFormModal from './ReviewFormModal';
+import ReviewItem from './ReviewItem';
+
+function getCsrfToken() {
+  const name = 'XSRF-TOKEN=';
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const cookies = decodedCookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i].trim();
+    if (cookie.indexOf(name) === 0) {
+      return cookie.substring(name.length, cookie.length);
+    }
+  }
+  return '';
+}
 
 function SpotDetail() {
   const { id } = useParams();
   const [spot, setSpot] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // Define loading state
   const [showModal, setShowModal] = useState(false);
   const [averageRating, setAverageRating] = useState(0);
   
@@ -18,26 +31,17 @@ function SpotDetail() {
   useEffect(() => {
     const fetchSpotDetails = async () => {
       try {
+        setLoading(true); // Start loading
         const spotResponse = await fetch(`/api/spots/${id}`);
         const reviewsResponse = await fetch(`/api/spots/${id}/reviews`);
-        
-        if (!spotResponse.ok || !reviewsResponse.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        
         const spotData = await spotResponse.json();
         const reviewsData = await reviewsResponse.json();
-        
-        console.log(reviewsData); // Check the structure of reviewsData
-        
-        const validReviews = reviewsData.Reviews.filter(review => review.User && review.User.firstName);
-
         setSpot(spotData);
-        setReviews(validReviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-      } catch (err) {
-        setError(err.message);
+        setReviews(reviewsData.Reviews);
+      } catch (error) {
+        console.error('Error fetching spot details:', error);
       } finally {
-        setLoading(false);
+        setLoading(false); // End loading
       }
     };
 
@@ -66,11 +70,30 @@ function SpotDetail() {
   };
 
   const addNewReview = (newReview) => {
-    setReviews([newReview, ...reviews]); // Add new review to the top of the list
+    setReviews([newReview, ...reviews]);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const deleteReview = async (reviewId) => {
+    try {
+      const response = await fetch(`/api/reviews/${reviewId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': getCsrfToken(),
+        },
+      });
+
+      if (response.ok) {
+        setReviews(reviews.filter(review => review.id !== reviewId));
+      } else {
+        console.error('Failed to delete review');
+      }
+    } catch (error) {
+      console.error('Error deleting review:', error);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>; // Display loading message
 
   const reviewDisplay = spot.numReviews > 0 
     ? (
@@ -129,11 +152,7 @@ function SpotDetail() {
         <div className="reviews-list">
           {reviews.length > 0 ? (
             reviews.map(review => (
-              <div key={review.id} className="review">
-                <h3>{review.User && review.User.firstName}</h3>
-                <p>{new Date(review.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
-                <p>{review.review}</p>
-              </div>
+              <ReviewItem key={review.id} review={review} onDelete={deleteReview} />
             ))
           ) : (
             <p>No reviews yet.</p>
