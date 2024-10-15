@@ -6,6 +6,7 @@ import * as sessionActions from "./store/session";
 import SpotList from './components/SpotList';
 import SpotDetail from './components/SpotDetail'; // Import the SpotDetail component
 import CreateSpotForm from './components/CreateSpotForm'; // Import the CreateSpotForm component
+import ManageSpots from './components/ManageSpots'; // Import the ManageSpots component
 
 function Layout() {
   const dispatch = useDispatch();
@@ -31,12 +32,16 @@ const router = createBrowserRouter([
         element: <SpotList />,
       },
       {
-        path: '/spots/:id', // Add route for spot detail
+        path: '/spots/:id',
         element: <SpotDetail />,
       },
       {
-        path: '/spots/new', // Add route for creating a new spot
+        path: '/spots/new',
         element: <CreateSpotForm />,
+      },
+      {
+        path: '/spots/manage', // Add this route for Manage Spots
+        element: <ManageSpots />,
       },
     ],
   },
