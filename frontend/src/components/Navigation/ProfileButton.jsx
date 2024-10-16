@@ -46,7 +46,7 @@ function ProfileButton({ user }) {
 
   return (
     <>
-      <button onClick={toggleMenu}>
+      <button onClick={toggleMenu} data-testid="user-menu-button">
         <FaUserCircle />
       </button>
       <ul className={ulClassName} ref={ulRef}>

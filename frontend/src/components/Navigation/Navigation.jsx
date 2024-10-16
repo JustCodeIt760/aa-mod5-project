@@ -10,7 +10,7 @@ function Navigation({ isLoaded }) {
   return (
     <ul>
       <li>
-        <NavLink to="/">Home</NavLink>
+        <NavLink to="/" data-testid="logo">Home</NavLink>
       </li>
       {isLoaded && (
         <React.Fragment>
