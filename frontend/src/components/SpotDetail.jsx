@@ -25,7 +25,8 @@ function SpotDetail() {
   const [loading, setLoading] = useState(true); // Define loading state
   const [showModal, setShowModal] = useState(false);
   const [averageRating, setAverageRating] = useState(0);
-  
+  const [error, setError] = useState(null);
+
   const currentUser = useSelector(state => state.session.user);
 
   useEffect(() => {
@@ -40,6 +41,7 @@ function SpotDetail() {
         setReviews(reviewsData.Reviews);
       } catch (error) {
         console.error('Error fetching spot details:', error);
+        setError(error.message);
       } finally {
         setLoading(false); // End loading
       }
@@ -94,6 +96,8 @@ function SpotDetail() {
   };
 
   if (loading) return <div>Loading...</div>; // Display loading message
+  if (error) return <div>Error: {error}</div>;
+  if (!spot) return <div>No spot found</div>;
 
   const reviewDisplay = spot.numReviews > 0 
     ? (
@@ -114,33 +118,32 @@ function SpotDetail() {
   const hasPostedReview = currentUser && reviews.some(review => review.userId === currentUser.id);
   const canPostReview = currentUser && currentUser.id !== spot.Owner.id && !hasPostedReview;
 
+  // Ensure we always have 5 image URLs (1 large + 4 small)
+  const allImageUrls = [
+    ...(spot.SpotImages || []).map(img => img.url),
+    ...Array(5).fill('https://via.placeholder.com/200x200?text=No+Image')
+  ].slice(0, 5);
+
   return (
     <div className="spot-detail">
-      <h1>{spot.name}</h1>
-      <p>Location: {spot.city}, {spot.state}, {spot.country}</p>
-      <div className="images">
-        {spot.SpotImages && spot.SpotImages.length > 0 ? (
-          <>
-            <img src={spot.SpotImages[0].url} alt={spot.name} className="large-image" />
-            <div className="small-images">
-              {spot.SpotImages.slice(1, 5).map((image, index) => (
-                <img key={index} src={image.url} alt={`${spot.name} ${index + 1}`} className="small-image" />
-              ))}
-            </div>
-          </>
-        ) : (
-          <p>No images available</p>
-        )}
-      </div>
-      <p>Hosted by {spot.Owner.firstName}, {spot.Owner.lastName}</p>
-      <p>{spot.description}</p>
-      <div className="callout-box">
-        <p>${spot.price} <span>night</span></p>
-        <div className="review-summary">
-          <p>Average Rating: {averageRating} Stars</p>
-          <p>{reviews.length} Review{reviews.length !== 1 ? 's' : ''}</p>
+      <h1 data-testid="spot-name">{spot.name}</h1>
+      <p data-testid="spot-location">{`${spot.city}, ${spot.state}, ${spot.country}`}</p>
+      
+      <div className="spot-images">
+        <img src={allImageUrls[0]} alt={spot.name} data-testid="spot-large-image" className="large-image" />
+        <div className="small-images">
+          {allImageUrls.slice(1).map((imageUrl, index) => (
+            <img key={index} src={imageUrl} alt={`${spot.name} ${index + 1}`} data-testid="spot-small-image" />
+          ))}
         </div>
-        <button className="reserve-button" onClick={handleReserveClick}>Reserve</button>
+      </div>
+
+      <p data-testid="spot-host">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</p>
+      <p data-testid="spot-description">{spot.description}</p>
+
+      <div data-testid="spot-callout-box" className="callout-box">
+        <p data-testid="spot-price">${spot.price} / night</p>
+        <button data-testid="reserve-button" onClick={handleReserveClick}>Reserve</button>
       </div>
       <div className="reviews-section">
         <h2>
