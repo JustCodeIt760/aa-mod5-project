@@ -10,6 +10,7 @@ function SpotList() {
   useEffect(() => {
     const fetchSpots = async () => {
       try {
+        setLoading(true);
         const response = await fetch('/api/spots');
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -46,19 +47,21 @@ function SpotList() {
   return (
     <div className="spot-list" data-testid="spots-list">
       {spots.map((spot) => (
-        <Link to={`/spots/${spot.id}`} key={spot.id} className="spot-tile-link" data-testid="spot-tile">
-          <div className="spot-tile-content" title={spot.name} data-testid="spot-tooltip">
-            <img src={spot.previewImage} alt={spot.name} className="thumbnail" data-testid="spot-thumbnail-image" />
-            <div className="spot-info">
-              <p data-testid="spot-city">{spot.city}, {spot.state}</p>
-              <div className="rating">
-                <FaStar />
-                <span data-testid="spot-rating">{spot.avgRating !== null ? Number(spot.avgRating).toFixed(1) : "New"}</span>
+        <div key={spot.id} data-testid="spot-tile">
+          <Link to={`/spots/${spot.id}`} className="spot-tile-link">
+            <div className="spot-tile-content" title={spot.name} data-testid="spot-tooltip">
+              <img src={spot.previewImage} alt={spot.name} className="thumbnail" data-testid="spot-thumbnail-image" />
+              <div className="spot-info">
+                <p data-testid="spot-city">{spot.city}, {spot.state}</p>
+                <div className="rating">
+                  <FaStar />
+                  <span data-testid="spot-rating">{spot.avgRating !== null ? Number(spot.avgRating).toFixed(1) : "New"}</span>
+                </div>
               </div>
+              <p className="price" data-testid="spot-price">${spot.price} / night</p>
             </div>
-            <p className="price" data-testid="spot-price">${spot.price} / night</p>
-          </div>
-        </Link>
+          </Link>
+        </div>
       ))}
     </div>
   );
