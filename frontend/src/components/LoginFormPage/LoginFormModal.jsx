@@ -11,15 +11,16 @@ function LoginFormModal() {
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
-    return dispatch(sessionActions.login({ credential, password }))
-      .then(closeModal)
-      .catch(async (res) => {
-        const data = await res.json();
-        if (data && data.message) setErrors({ message: data.message });
-      });
+    try {
+      await dispatch(sessionActions.login({ credential, password }));
+      closeModal();
+    } catch (res) {
+      const data = await res.json();
+      if (data && data.errors) setErrors(data.errors);
+    }
   };
 
   const handleDemoLogin = () => {
@@ -64,7 +65,7 @@ function LoginFormModal() {
         >
           Log In
         </button>
-        <button type="button" onClick={handleDemoLogin}>
+        <button type="button" onClick={handleDemoLogin} data-testid="demo-user-login">
           Log in as Demo User
         </button>
       </form>

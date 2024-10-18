@@ -263,7 +263,7 @@ function CreateSpotForm() {
           />
         </div>
       ))}
-      <button type="submit">Create Spot</button>
+      <button type="submit" data-testid="create-new-spot-button">Create Spot</button>
     </form>
   );
 }

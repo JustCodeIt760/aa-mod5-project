@@ -329,54 +329,43 @@ router.get("/:spotId", async (req, res) => {
 });
 
 router.post("/", requireAuth, async (req, res) => {
-  const { address, city, state, country, lat, lng, name, description, price } =
+  const { address, city, state, country, lat, lng, name, description, price, images } =
     req.body;
 
-  const spot = {
-    ownerId: req.user.id,
-    address,
-    city,
-    state,
-    country,
-    lat,
-    lng,
-    name,
-    description,
-    price,
-  };
-  const errorOptions = {
-    address: "Street address is required",
-    city: "City is required",
-    state: "State is required",
-    country: "Country is required",
-    lat: "Latitude must be within -90 and 90",
-    lng: "Longitude must be within -180 and 180",
-    name: "Name is required",
-    nameLength: "Name must be less than 50 characters",
-    description: "Description is required",
-    price: "Price per day must be a positive number",
-  };
-  const errorsObj = {};
+  try {
+    const newSpot = await Spot.create({
+      ownerId: req.user.id,
+      address,
+      city,
+      state,
+      country,
+      lat,
+      lng,
+      name,
+      description,
+      price
+    });
 
-  for (item in spot) {
-    if (spot[item] === undefined) {
-      errorsObj[item] = errorOptions[item];
+    // Handle image creation
+    if (images && images.length > 0) {
+      const spotImages = images.map(url => ({
+        spotId: newSpot.id,
+        url,
+        preview: true // You might want to adjust this based on your requirements
+      }));
+      await SpotImage.bulkCreate(spotImages);
     }
-  }
-  if (spot.name) {
-    if (spot.name.length >= 50) {
-      errorsObj.name = errorOptions.nameLength;
-    }
-  }
 
-  if (Object.entries(errorsObj).length > 0) {
-    const responseError = {};
-    responseError.message = "Bad Request";
-    responseError.errors = errorsObj;
-    return res.status(400).json(responseError);
+    // Fetch the created spot with its images
+    const spotWithImages = await Spot.findByPk(newSpot.id, {
+      include: [{ model: SpotImage, as: 'SpotImages' }]
+    });
+
+    res.status(201).json(spotWithImages);
+  } catch (error) {
+    console.error('Error creating spot:', error);
+    res.status(400).json({ errors: error.errors.map(e => e.message) });
   }
-  const addedSpot = await Spot.create(spot);
-  res.status(201).json(addedSpot);
 });
 
 router.put("/:spotId", requireAuth, async (req, res) => {

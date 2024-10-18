@@ -22,26 +22,33 @@ function SpotDetail() {
   const { id } = useParams();
   const [spot, setSpot] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true); // Define loading state
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [averageRating, setAverageRating] = useState(0);
-  
+  const [error, setError] = useState(null);
+
   const currentUser = useSelector(state => state.session.user);
 
   useEffect(() => {
     const fetchSpotDetails = async () => {
       try {
-        setLoading(true); // Start loading
+        setLoading(true);
         const spotResponse = await fetch(`/api/spots/${id}`);
         const reviewsResponse = await fetch(`/api/spots/${id}/reviews`);
         const spotData = await spotResponse.json();
         const reviewsData = await reviewsResponse.json();
+        
+        console.log('Spot data:', spotData);
+        console.log('Reviews data:', reviewsData);
+        
         setSpot(spotData);
         setReviews(reviewsData.Reviews);
+        console.log("Reviews data:", reviewsData.Reviews); // Add this line
       } catch (error) {
         console.error('Error fetching spot details:', error);
+        setError(error.message);
       } finally {
-        setLoading(false); // End loading
+        setLoading(false);
       }
     };
 
@@ -94,60 +101,82 @@ function SpotDetail() {
   };
 
   if (loading) return <div>Loading...</div>; // Display loading message
+  if (error) return <div>Error: {error}</div>;
+  if (!spot) return <div>No spot found</div>;
 
-  const reviewDisplay = spot.numReviews > 0 
-    ? (
-      <>
-        <FaStar />
-        <span>{Number(spot.avgStarRating).toFixed(1)}</span>
-        <span> · </span>
-        <span>{spot.numReviews} {spot.numReviews === 1 ? 'Review' : 'Reviews'}</span>
-      </>
-    )
-    : (
-      <>
-        <FaStar />
-        <span>New</span>
-      </>
-    );
+  // Fetch reviews and calculate the number of reviews
+  const numReviews = reviews.length; // Assuming `reviews` is an array of review objects
+  const avgRating = numReviews > 0 ? Number(spot.avgStarRating).toFixed(1) : 'New';
+  const reviewText = numReviews === 1 ? 'Review' : 'Reviews';
 
   const hasPostedReview = currentUser && reviews.some(review => review.userId === currentUser.id);
   const canPostReview = currentUser && currentUser.id !== spot.Owner.id && !hasPostedReview;
 
+  console.log('canPostReview:', canPostReview);
+
+  // Ensure we always have 5 image URLs (1 large + 4 small)
+  const spotImages = spot.SpotImages || [];
+  const previewImage = spotImages.find(img => img.preview) || spotImages[0] || { url: spot.previewImage };
+
+  // Add this just before the return statement
+  console.log('Current user:', currentUser);
+  console.log('Can post review:', canPostReview);
+
   return (
     <div className="spot-detail">
-      <h1>{spot.name}</h1>
-      <p>Location: {spot.city}, {spot.state}, {spot.country}</p>
-      <div className="images">
-        {spot.SpotImages && spot.SpotImages.length > 0 ? (
-          <>
-            <img src={spot.SpotImages[0].url} alt={spot.name} className="large-image" />
-            <div className="small-images">
-              {spot.SpotImages.slice(1, 5).map((image, index) => (
-                <img key={index} src={image.url} alt={`${spot.name} ${index + 1}`} className="small-image" />
-              ))}
-            </div>
-          </>
-        ) : (
-          <p>No images available</p>
+      <h1 data-testid="spot-name">{spot.name}</h1>
+      <p data-testid="spot-location">{`${spot.city}, ${spot.state}, ${spot.country}`}</p>
+      
+      <div className="spot-images">
+        {previewImage && (
+          <img 
+            src={previewImage.url || previewImage}
+            alt={spot.name} 
+            data-testid="spot-large-image" 
+            className="large-image" 
+          />
+        )}
+        <div className="small-images">
+          {spotImages.slice(0, 4).map((image, index) => (
+            <img 
+              key={index} 
+              src={image.url || image}
+              alt={`${spot.name} ${index + 1}`} 
+              data-testid="spot-small-image" 
+            />
+          ))}
+        </div>
+      </div>
+
+      <p data-testid="spot-host">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</p>
+      <p data-testid="spot-description">{spot.description}</p>
+
+      <div className="callout-box" data-testid="spot-callout-box">
+        <span data-testid="spot-rating">{avgRating}</span>
+        {numReviews > 0 && (
+          <span data-testid="review-count">{numReviews} {reviewText}</span>
+        )}
+        {numReviews === 0 && (
+          <p role="paragraph" data-testid="no-reviews-message">Be the first to post a review!</p>
         )}
       </div>
-      <p>Hosted by {spot.Owner.firstName}, {spot.Owner.lastName}</p>
-      <p>{spot.description}</p>
-      <div className="callout-box">
-        <p>${spot.price} <span>night</span></p>
-        <div className="review-summary">
-          <p>Average Rating: {averageRating} Stars</p>
-          <p>{reviews.length} Review{reviews.length !== 1 ? 's' : ''}</p>
-        </div>
-        <button className="reserve-button" onClick={handleReserveClick}>Reserve</button>
-      </div>
+
+      <h2 data-testid="reviews-heading">
+        <span data-testid="spot-rating">{avgRating}</span>
+        {numReviews > 0 && (
+          <span data-testid="review-count">{numReviews} {reviewText}</span>
+        )}
+      </h2>
+
       <div className="reviews-section">
-        <h2>
-          {averageRating} Stars ({reviews.length} Review{reviews.length !== 1 ? 's' : ''})
-        </h2>
         {canPostReview && (
-          <button className="post-review-button" onClick={handlePostReviewClick}>Post Your Review</button>
+          <button 
+            className="post-review-button" 
+            onClick={handlePostReviewClick} 
+            data-testid="review-button"
+          >
+            Post Your Review
+          </button>
         )}
         <div className="reviews-list">
           {reviews.length > 0 ? (
