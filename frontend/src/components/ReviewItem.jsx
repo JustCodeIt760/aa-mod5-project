@@ -22,6 +22,8 @@ function ReviewItem({ review, onDelete }) {
     setShowModal(false);
   };
 
+  console.log('Review:', review);
+
   return (
     <div className="review">
       <h3>{review.User && review.User.firstName}</h3>

@@ -19,7 +19,11 @@ function LoginFormModal() {
       closeModal();
     } catch (res) {
       const data = await res.json();
-      if (data && data.errors) setErrors(data.errors);
+      if (data && data.errors) {
+        setErrors(data.errors);
+      } else if (data && data.message) {
+        setErrors({ credential: data.message });
+      }
     }
   };
 
@@ -56,8 +60,8 @@ function LoginFormModal() {
             data-testid="password-input"
           />
         </label>
-        {errors.credential && <p>{errors.credential}</p>}
-        {errors.message && <p>{errors.message}</p>}
+        {errors.credential && <p data-testid="login-error">{errors.credential}</p>}
+        {errors.message && <p data-testid="login-error">{errors.message}</p>}
         <button
           type="submit"
           disabled={credential.length < 4 || password.length < 6}

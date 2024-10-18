@@ -732,6 +732,7 @@ router.post(
         stars,
       });
 
+      const user = await User.findByPk(userId);
       const formattedReview = {
         id: newReview.id,
         userId: newReview.userId,
@@ -746,6 +747,10 @@ router.post(
           .toISOString()
           .replace("T", " ")
           .slice(0, 19),
+        User: {
+          id: user.id,
+          firstName: user.firstName
+        }
       };
 
       res.status(201).json(formattedReview);

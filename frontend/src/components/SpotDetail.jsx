@@ -122,6 +122,14 @@ function SpotDetail() {
   console.log('Current user:', currentUser);
   console.log('Can post review:', canPostReview);
 
+  // Format the rating
+  const formattedRating = avgRating !== 'New' ? `★${Number(avgRating).toFixed(1)}` : 'New';
+
+  const hasReviews = numReviews > 0;
+  const ratingDisplay = hasReviews ? `★${Number(avgRating).toFixed(1)}` : 'New';
+
+  console.log('Reviews:', reviews);
+
   return (
     <div className="spot-detail">
       <h1 data-testid="spot-name">{spot.name}</h1>
@@ -148,25 +156,42 @@ function SpotDetail() {
         </div>
       </div>
 
-      <p data-testid="spot-host">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</p>
+      <div data-testid="spot-host">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</div>
       <p data-testid="spot-description">{spot.description}</p>
 
-      <div className="callout-box" data-testid="spot-callout-box">
-        <span data-testid="spot-rating">{avgRating}</span>
-        {numReviews > 0 && (
-          <span data-testid="review-count">{numReviews} {reviewText}</span>
-        )}
-        {numReviews === 0 && (
-          <p role="paragraph" data-testid="no-reviews-message">Be the first to post a review!</p>
-        )}
+      <div data-testid="spot-callout-box" className="callout-box">
+        <p role="paragraph">
+          <span data-testid="spot-price">${spot.price} / night</span>
+          <br />
+          <span data-testid="spot-rating">{ratingDisplay}</span>
+          {hasReviews && (
+            <>
+              <span> · </span>
+              <span data-testid="review-count">{numReviews} {reviewText}</span>
+            </>
+          )}
+        </p>
+        <button 
+          data-testid="reserve-button"
+          onClick={() => alert('Feature coming soon')}
+        >
+          Reserve
+        </button>
       </div>
 
       <h2 data-testid="reviews-heading">
-        <span data-testid="spot-rating">{avgRating}</span>
-        {numReviews > 0 && (
-          <span data-testid="review-count">{numReviews} {reviewText}</span>
+        <span data-testid="spot-rating">{ratingDisplay}</span>
+        {hasReviews && (
+          <>
+            <span> · </span>
+            <span data-testid="review-count">{numReviews} {reviewText}</span>
+          </>
         )}
       </h2>
+
+      {!hasReviews && currentUser && currentUser.id !== spot.Owner.id && (
+        <p>Be the first to post a review!</p>
+      )}
 
       <div className="reviews-section">
         {canPostReview && (
