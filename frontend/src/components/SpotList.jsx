@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { FaStar } from 'react-icons/fa'; // Import the star icon
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link, useLocation } from 'react-router-dom'; // Import Link from react-router-dom
+import { useSelector } from 'react-redux';
 
 function SpotList() {
   const [spots, setSpots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const location = useLocation();
+  const sessionUser = useSelector(state => state.session.user);
 
   useEffect(() => {
     const fetchSpots = async () => {
@@ -46,9 +49,11 @@ function SpotList() {
 
   return (
     <div className="spot-list-container">
-      <Link to="/spots/new" className="create-spot-link">
-        <button data-testid="create-new-spot-button">Create a New Spot</button>
-      </Link>
+      {location.pathname === '/' && sessionUser && (
+        <Link to="/spots/new" className="create-spot-link">
+          <button data-testid="create-new-spot-button">Create a New Spot</button>
+        </Link>
+      )}
       <div className="spot-list" data-testid="spots-list">
         {spots.map((spot) => (
           <div key={spot.id} data-testid="spot-tile">
