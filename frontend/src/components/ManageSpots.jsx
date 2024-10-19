@@ -19,19 +19,29 @@ function getCsrfToken() {
 }
 
 function ManageSpots() {
-  const [spots, setSpots] = useState([]);
+  const [spots, setSpots] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [spotToDelete, setSpotToDelete] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserSpots = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch('/api/spots/current');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
-        setSpots(data.Spots);
+        console.log('Fetched spots:', data);
+        setSpots(data.Spots || []);
       } catch (error) {
         console.error('Error fetching user spots:', error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -73,10 +83,18 @@ function ManageSpots() {
     }
   };
 
+  if (isLoading) {
+    return <div data-testid="user-spots">Loading...</div>;
+  }
+
+  if (error) {
+    return <div data-testid="user-spots">Error: {error}</div>;
+  }
+
   return (
-    <div className="manage-spots">
+    <div className="manage-spots" data-testid="user-spots">
       <h1>Manage Spots</h1>
-      {spots.length > 0 ? (
+      {spots && spots.length > 0 ? (
         spots.map((spot) => (
           <div key={spot.id} className="spot-tile">
             <Link to={`/spots/${spot.id}`} className="spot-tile-link">
