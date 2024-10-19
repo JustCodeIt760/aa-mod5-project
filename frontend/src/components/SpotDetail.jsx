@@ -26,6 +26,7 @@ function SpotDetail() {
   const [showModal, setShowModal] = useState(false);
   const [averageRating, setAverageRating] = useState(0);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const currentUser = useSelector(state => state.session.user);
 
@@ -49,6 +50,7 @@ function SpotDetail() {
         setError(error.message);
       } finally {
         setLoading(false);
+        setIsLoading(false);
       }
     };
 
@@ -100,7 +102,9 @@ function SpotDetail() {
     }
   };
 
-  if (loading) return <div>Loading...</div>; // Display loading message
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   if (error) return <div>Error: {error}</div>;
   if (!spot) return <div>No spot found</div>;
 
@@ -109,8 +113,8 @@ function SpotDetail() {
   const avgRating = numReviews > 0 ? Number(spot.avgStarRating).toFixed(1) : 'New';
   const reviewText = numReviews === 1 ? 'Review' : 'Reviews';
 
-  const hasPostedReview = currentUser && reviews.some(review => review.userId === currentUser.id);
-  const canPostReview = currentUser && currentUser.id !== spot.Owner.id && !hasPostedReview;
+  const userHasReviewed = currentUser && reviews.some(review => review.userId === currentUser.id);
+  const canPostReview = currentUser && currentUser.id !== spot.Owner.id && !userHasReviewed;
 
   console.log('canPostReview:', canPostReview);
 
@@ -213,7 +217,14 @@ function SpotDetail() {
           )}
         </div>
       </div>
-      {showModal && <ReviewFormModal onClose={handleCloseModal} onSubmit={addNewReview} spotId={id} />}
+      {showModal && (
+        <ReviewFormModal 
+          onClose={handleCloseModal} 
+          onSubmit={addNewReview} 
+          spotId={id} 
+          data-testid="create-a-review-modal"
+        />
+      )}
     </div>
   );
 }

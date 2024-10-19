@@ -4,6 +4,7 @@ function ReviewFormModal({ onClose, onSubmit, spotId }) {
   const [review, setReview] = useState('');
   const [stars, setStars] = useState(1);
   const [error, setError] = useState(null);
+  const [hoverRating, setHoverRating] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +45,7 @@ function ReviewFormModal({ onClose, onSubmit, spotId }) {
   }
 
   return (
-    <div className="modal">
+    <div className="modal" data-testid="review-modal">
       <div className="modal-content">
         <span className="close" onClick={onClose}>&times;</span>
         <h2>How was your stay?</h2>
@@ -57,14 +58,27 @@ function ReviewFormModal({ onClose, onSubmit, spotId }) {
             required
           />
           <div className="star-rating">
-            <label htmlFor="stars">Stars</label>
-            <select id="stars" value={stars} onChange={(e) => setStars(e.target.value)}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <option key={star} value={star}>{star} Star{star > 1 ? 's' : ''}</option>
-              ))}
-            </select>
+            <p>Stars</p>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                onClick={() => setStars(star)}
+                onMouseEnter={() => setHoverRating(star)}
+                onMouseLeave={() => setHoverRating(0)}
+                data-testid="create-a-review-clickable-star"
+                style={{ cursor: 'pointer', color: (hoverRating || stars) >= star ? 'gold' : 'gray' }}
+              >
+                ★
+              </span>
+            ))}
           </div>
-          <button type="submit" disabled={review.length < 10 || stars < 1}>Submit Your Review</button>
+          <button 
+            type="submit" 
+            disabled={review.length < 10 || stars < 1}
+            data-testid="submit-review-button"
+          >
+            Submit Your Review
+          </button>
         </form>
       </div>
     </div>
