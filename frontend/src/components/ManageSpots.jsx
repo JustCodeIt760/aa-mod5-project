@@ -28,6 +28,9 @@ function ManageSpots() {
 
   useEffect(() => {
     const fetchUserSpots = async () => {
+      if (process.env.NODE_ENV !== 'production') {
+        await restoreCSRF();
+      }
       setIsLoading(true);
       try {
         const response = await fetch('/api/spots/current');
