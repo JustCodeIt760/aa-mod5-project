@@ -132,31 +132,28 @@ router.get("/", async (req, res) => {
   // Query spots with filters and pagination
   try {
     const spots = await Spot.findAll({
-      where,
-      limit,
-      offset,
-      attributes: {
-        include: [
-          [
-            sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('Reviews.stars')), 1),
-            'avgRating'
-          ],
-        ],
-      },
+      attributes: [
+        'id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'description', 'price', 'createdAt', 'updatedAt',
+        [sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('Reviews.stars')), 1), 'avgRating']
+      ],
       include: [
         {
           model: Review,
           attributes: [],
+          required: false
         },
         {
           model: SpotImage,
           attributes: ['url'],
           where: { preview: true },
           required: false,
-        },
+        }
       ],
-      group: ['Spot.id'],
-      logging: console.log, // Add this line to log the query
+      group: ['Spot.id', 'SpotImages.id'],
+      limit,
+      offset,
+      where,
+      subQuery: false
     });
 
     // Format the response data
