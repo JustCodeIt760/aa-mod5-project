@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { FaStar } from 'react-icons/fa'; // Import FaStar
 import ReviewFormModal from './ReviewFormModal';
 import ReviewItem from './ReviewItem';
-
+import './SpotDetail.css';
 function getCsrfToken() {
   const name = 'XSRF-TOKEN=';
   const decodedCookie = decodeURIComponent(document.cookie);
@@ -108,6 +108,9 @@ function SpotDetail() {
   if (error) return <div>Error: {error}</div>;
   if (!spot) return <div>No spot found</div>;
 
+  // Get the first image and the rest of the images
+  const [firstImage, ...otherImages] = spot.SpotImages || [];
+
   // Fetch reviews and calculate the number of reviews
   const numReviews = reviews.length; // Assuming `reviews` is an array of review objects
   const avgRating = numReviews > 0 ? Number(spot.avgStarRating).toFixed(1) : 'New';
@@ -117,10 +120,6 @@ function SpotDetail() {
   const canPostReview = currentUser && currentUser.id !== spot.Owner.id && !userHasReviewed;
 
   console.log('canPostReview:', canPostReview);
-
-  // Ensure we always have 5 image URLs (1 large + 4 small)
-  const spotImages = spot.SpotImages || [];
-  const previewImage = spotImages.find(img => img.preview) || spotImages[0] || { url: spot.previewImage };
 
   // Add this just before the return statement
   console.log('Current user:', currentUser);
@@ -136,53 +135,56 @@ function SpotDetail() {
 
   return (
     <div className="spot-detail">
-      <h1 data-testid="spot-name">{spot.name}</h1>
-      <p data-testid="spot-location">{`${spot.city}, ${spot.state}, ${spot.country}`}</p>
+      <h1 data-testid="spot-heading">{spot.name}</h1>
+      <p data-testid="spot-detail-page-location">{`${spot.city}, ${spot.state}, ${spot.country}`}</p>
       
       <div className="spot-images">
-        {previewImage && (
+        <div className="large-image-container">
           <img 
-            src={previewImage.url || previewImage}
+            src={firstImage?.url || spot.previewImage} 
             alt={spot.name} 
-            data-testid="spot-large-image" 
             className="large-image" 
+            data-testid="spot-large-image" 
           />
-        )}
-        <div className="small-images">
-          {spotImages.slice(0, 4).map((image, index) => (
+        </div>
+        <div className="small-images-grid">
+          {otherImages.slice(0, 4).map((image, index) => (
             <img 
               key={index} 
-              src={image.url || image}
-              alt={`${spot.name} ${index + 1}`} 
+              src={image.url} 
+              alt={`${spot.name} ${index + 2}`} 
+              className="small-image"
               data-testid="spot-small-image" 
             />
           ))}
         </div>
       </div>
 
-      <div data-testid="spot-host">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</div>
-      <p data-testid="spot-description">{spot.description}</p>
-
-      <div data-testid="spot-callout-box" className="callout-box">
-        <p role="paragraph">
-          <span data-testid="spot-price">${spot.price} / night</span>
-          <br />
-          <span data-testid="spot-rating">{ratingDisplay}</span>
-          {hasReviews && (
-            <>
-              <span> · </span>
-              <span data-testid="review-count">{numReviews} {reviewText}</span>
-            </>
-          )}
-        </p>
-        <button 
-          data-testid="reserve-button"
-          onClick={() => alert('Feature coming soon')}
-        >
-          Reserve
-        </button>
+      <div className="spot-info-container">
+        <div className="spot-info-left">
+          <div data-testid="spot-host">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</div>
+          <p data-testid="spot-description">{spot.description}</p>
+        </div>
+        <div data-testid="spot-callout-box" className="callout-box">
+          <p role="paragraph">
+            <span data-testid="spot-price">${spot.price} / night</span>
+            <br />
+            <span data-testid="spot-rating">{ratingDisplay}</span>
+            {hasReviews && (
+              <>
+                <span> · </span>
+                <span data-testid="review-count">{numReviews} {reviewText}</span>
+              </>
+            )}
+          </p>
+          <button 
+            data-testid="reserve-button"
+            onClick={() => alert('Feature coming soon')}
+          >
+            Reserve
+          </button>
+        </div>
       </div>
-
       <h2 data-testid="reviews-heading">
         <span data-testid="spot-rating">{ratingDisplay}</span>
         {hasReviews && (

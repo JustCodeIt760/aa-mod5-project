@@ -1,0 +1,86 @@
+.login-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 300px; /* Adjust as needed */
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-form-container input,
+.login-form-container button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.login-form-container button {
+  cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}
+
+/* If you have a specific class for the demo user button, add it here */
+.demo-user-button {
+  margin-top: 10px;
+}
+
+.login-modal {
+  width: 500px; /* Increased from 400px to 500px */
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Rest of the CSS remains the same */
+
+.login-form button[type="submit"] {
+  margin-top: 25px; /* Increased from 20px to 25px */
+  /* ... other styles ... */
+}
+
+#login-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 400px; /* Adjust width as needed */
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: auto;
+}
+
+#login-modal input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#login-modal button {
+  width: 100%;
+  padding: 10px;
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#login-modal button:disabled {
+  background-color: #ccc;
+}
+
+#login-modal button:hover:enabled {
+  background-color: #023e8a;
+}

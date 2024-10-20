@@ -1,0 +1,21 @@
+.star-rating-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+}
+
+.stars-container {
+  display: flex;
+  margin-right: 10px;
+}
+
+.star-rating p {
+  margin: 0;
+}
+
