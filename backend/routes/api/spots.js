@@ -159,27 +159,23 @@ router.get("/", async (req, res) => {
     });
 
     // Format the response data
-    const Spots = spots.map((spot) => {
-      return {
-        id: spot.id,
-        ownerId: spot.ownerId,
-        address: spot.address,
-        city: spot.city,
-        state: spot.state,
-        country: spot.country,
-        lat: parseFloat(spot.lat),
-        lng: parseFloat(spot.lng),
-        name: spot.name,
-        description: spot.description,
-        price: parseInt(spot.price),
-        createdAt: spot.createdAt,
-        updatedAt: spot.updatedAt,
-        avgRating: spot.dataValues.avgRating
-          ? parseFloat(spot.dataValues.avgRating)
-          : null,
-        previewImage: spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
-      };
-    });
+    const Spots = spots.map((spot) => ({
+      id: spot.id,
+      ownerId: spot.ownerId,
+      address: spot.address,
+      city: spot.city,
+      state: spot.state,
+      country: spot.country,
+      lat: parseFloat(spot.lat),
+      lng: parseFloat(spot.lng),
+      name: spot.name,
+      description: spot.description,
+      price: parseFloat(spot.price),
+      createdAt: spot.createdAt,
+      updatedAt: spot.updatedAt,
+      avgRating: spot.dataValues.avgRating ? parseFloat(spot.dataValues.avgRating) : null,
+      previewImage: spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
+    }));
 
     // Return the response
     return res.json({
