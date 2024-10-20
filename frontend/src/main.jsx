@@ -10,8 +10,9 @@ import { Modal, ModalProvider } from './context/Modal';
 
 const store = configureStore();
 
-// Automatically restore CSRF token on load
-restoreCSRF();
+if (process.env.NODE_ENV !== 'production') {
+  await restoreCSRF();
+}
 
 if (import.meta.env.MODE !== 'production') {
   window.csrfFetch = csrfFetch;
