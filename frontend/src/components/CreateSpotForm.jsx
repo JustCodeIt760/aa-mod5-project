@@ -74,6 +74,9 @@ function CreateSpotForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (process.env.NODE_ENV !== 'production') {
+      await restoreCSRF();
+    }
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
