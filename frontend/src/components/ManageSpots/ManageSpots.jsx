@@ -11,8 +11,27 @@ function ManageSpots() {
   const isLoading = useSelector(state => state.spots.isLoading);
 
   useEffect(() => {
-    dispatch(fetchUserSpots());
-  }, [dispatch]);
+    const fetchUserSpots = async () => {
+      if (process.env.NODE_ENV !== 'production') {
+        await restoreCSRF();
+      }
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/spots/current');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setSpots(data.Spots || []);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserSpots();
+  }, []);
 
   if (isLoading) {
     return <div data-testid="user-spots">Loading...</div>;

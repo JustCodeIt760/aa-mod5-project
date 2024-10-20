@@ -190,11 +190,10 @@ router.get("/", async (req, res) => {
       size,
     });
   } catch (error) {
-    // Log the error for debugging
-
-    // Return a 500 Internal Server Error with a generic message
-    return res.status(500).json({
+    console.error('Error in GET /api/spots:', error);
+    res.status(500).json({
       message: "Internal Server Error",
+      error: process.env.NODE_ENV === 'production' ? null : error.toString()
     });
   }
 });
