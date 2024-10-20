@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaStar } from 'react-icons/fa'; // Import the star icon
 import { Link, useLocation } from 'react-router-dom'; // Import Link from react-router-dom
 import { useSelector } from 'react-redux';
+import { restoreCSRF } from '../store/csrf';
 import './SpotList.css';
 
 function SpotList() {
@@ -13,6 +14,9 @@ function SpotList() {
 
   useEffect(() => {
     const fetchSpots = async () => {
+      if (process.env.NODE_ENV !== 'production') {
+        await restoreCSRF();
+      }
       try {
         setLoading(true);
         const response = await fetch('/api/spots');
