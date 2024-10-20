@@ -75,7 +75,6 @@ router.post("/", validateSignup, async (req, res) => {
     await setTokenCookie(res, user);
     return res.status(201).json({ user: safeUser });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       message: "Server error",
       errors: { server: "An unexpected error occurred" },

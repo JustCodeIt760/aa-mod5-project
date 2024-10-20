@@ -15,7 +15,6 @@ router.delete("/:imageId", requireAuth, async (req, res) => {
       attributes: ["userId"],
     },
   });
-  console.log(reviewImage);
 
   if (!reviewImage) {
     return res.status(404).json({ message: "Review Image couldn't be found" });
@@ -26,8 +25,6 @@ router.delete("/:imageId", requireAuth, async (req, res) => {
   }
 
   await reviewImage.destroy();
-  console.log(res);
-  console.log(res.body);
   res.status(200).json({ message: "Successfully deleted" });
 });
 
