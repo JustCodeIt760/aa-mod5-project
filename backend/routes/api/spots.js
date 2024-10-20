@@ -155,27 +155,33 @@ router.get("/", async (req, res) => {
           required: false,
         },
       ],
-      group: ['Spot.id', 'SpotImages.id'],
+      group: ['Spot.id'],
+      logging: console.log, // Add this line to log the query
     });
 
     // Format the response data
-    const Spots = spots.map((spot) => ({
-      id: spot.id,
-      ownerId: spot.ownerId,
-      address: spot.address,
-      city: spot.city,
-      state: spot.state,
-      country: spot.country,
-      lat: parseFloat(spot.lat),
-      lng: parseFloat(spot.lng),
-      name: spot.name,
-      description: spot.description,
-      price: parseFloat(spot.price),
-      createdAt: spot.createdAt,
-      updatedAt: spot.updatedAt,
-      avgRating: spot.dataValues.avgRating ? parseFloat(spot.dataValues.avgRating) : null,
-      previewImage: spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
-    }));
+    const Spots = spots.map((spot) => {
+      return {
+        id: spot.id,
+        ownerId: spot.ownerId,
+        address: spot.address,
+        city: spot.city,
+        state: spot.state,
+        country: spot.country,
+        lat: parseFloat(spot.lat),
+        lng: parseFloat(spot.lng),
+        name: spot.name,
+        description: spot.description,
+        price: parseInt(spot.price),
+        createdAt: spot.createdAt,
+        updatedAt: spot.updatedAt,
+        avgRating: spot.dataValues.avgRating
+          ? parseFloat(spot.dataValues.avgRating)
+          : null,
+        previewImage: spot.dataValues.previewImage || null,
+      };
+    });
+    console.log(req.query);
 
     // Return the response
     return res.json({
@@ -184,10 +190,12 @@ router.get("/", async (req, res) => {
       size,
     });
   } catch (error) {
-    console.error('Error in GET /api/spots:', error);
-    res.status(500).json({
+    // Log the error for debugging
+    console.error("Error fetching spots:", error);
+
+    // Return a 500 Internal Server Error with a generic message
+    return res.status(500).json({
       message: "Internal Server Error",
-      error: process.env.NODE_ENV === 'production' ? null : error.toString()
     });
   }
 });
@@ -225,6 +233,7 @@ router.get("/current", requireAuth, async (req, res) => {
 
     return res.json({ Spots: formattedSpots });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: "Server error" });
   }
 });
@@ -318,42 +327,54 @@ router.get("/:spotId", async (req, res) => {
 });
 
 router.post("/", requireAuth, async (req, res) => {
-  const { address, city, state, country, lat, lng, name, description, price, images } =
+  const { address, city, state, country, lat, lng, name, description, price } =
     req.body;
 
-  try {
-    const newSpot = await Spot.create({
-      ownerId: req.user.id,
-      address,
-      city,
-      state,
-      country,
-      lat,
-      lng,
-      name,
-      description,
-      price
-    });
+  const spot = {
+    ownerId: req.user.id,
+    address,
+    city,
+    state,
+    country,
+    lat,
+    lng,
+    name,
+    description,
+    price,
+  };
+  const errorOptions = {
+    address: "Street address is required",
+    city: "City is required",
+    state: "State is required",
+    country: "Country is required",
+    lat: "Latitude must be within -90 and 90",
+    lng: "Longitude must be within -180 and 180",
+    name: "Name is required",
+    nameLength: "Name must be less than 50 characters",
+    description: "Description is required",
+    price: "Price per day must be a positive number",
+  };
+  const errorsObj = {};
 
-    // Handle image creation
-    if (images && images.length > 0) {
-      const spotImages = images.map(url => ({
-        spotId: newSpot.id,
-        url,
-        preview: true // You might want to adjust this based on your requirements
-      }));
-      await SpotImage.bulkCreate(spotImages);
+  for (item in spot) {
+    if (spot[item] === undefined) {
+      errorsObj[item] = errorOptions[item];
     }
-
-    // Fetch the created spot with its images
-    const spotWithImages = await Spot.findByPk(newSpot.id, {
-      include: [{ model: SpotImage, as: 'SpotImages' }]
-    });
-
-    res.status(201).json(spotWithImages);
-  } catch (error) {
-    res.status(400).json({ errors: error.errors.map(e => e.message) });
   }
+  if (spot.name) {
+    if (spot.name.length >= 50) {
+      errorsObj.name = errorOptions.nameLength;
+    }
+  }
+
+  if (Object.entries(errorsObj).length > 0) {
+    const responseError = {};
+    responseError.message = "Bad Request";
+    responseError.errors = errorsObj;
+    return res.status(400).json(responseError);
+  }
+  const addedSpot = await Spot.create(spot);
+  res.status(201).json(addedSpot);
 });
 
 router.put("/:spotId", requireAuth, async (req, res) => {
@@ -659,6 +680,7 @@ router.get("/:spotId/reviews", async (req, res) => {
 
     res.status(200).json({ Reviews: formattedReviews });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server error", errors: err.message });
   }
 });
@@ -719,7 +741,6 @@ router.post(
         stars,
       });
 
-      const user = await User.findByPk(userId);
       const formattedReview = {
         id: newReview.id,
         userId: newReview.userId,
@@ -734,14 +755,11 @@ router.post(
           .toISOString()
           .replace("T", " ")
           .slice(0, 19),
-        User: {
-          id: user.id,
-          firstName: user.firstName
-        }
       };
 
       res.status(201).json(formattedReview);
     } catch (err) {
+      console.error(err);
       res.status(500).json({ message: "Server error", errors: err.message });
     }
   }
@@ -773,6 +791,7 @@ router.delete("/spot-images/:imageId", requireAuth, async (req, res) => {
 
     res.status(200).json({ message: "Successfully deleted" });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
