@@ -1,20 +1,57 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { FaStar } from 'react-icons/fa';
+import { fetchUserSpots } from '../../store/spots';
+import './ManageSpots.css';
 
 function ManageSpots() {
-  const userSpots = useSelector(state => state.spots.userSpots); // Adjust this based on your actual state structure
+  const dispatch = useDispatch();
+  const spots = useSelector(state => state.spots.userSpots);
+  const isLoading = useSelector(state => state.spots.isLoading);
+
+  useEffect(() => {
+    dispatch(fetchUserSpots());
+  }, [dispatch]);
+
+  if (isLoading) {
+    return <div data-testid="user-spots">Loading...</div>;
+  }
 
   return (
-    <div data-testid="user-spots">
+    <div className="manage-spots-container" data-testid="user-spots">
       <h1>Manage Spots</h1>
-      {userSpots && userSpots.length > 0 ? (
-        <ul>
-          {userSpots.map(spot => (
-            <li key={spot.id}>{spot.name}</li> // Adjust based on your spot data structure
+      {spots && spots.length > 0 ? (
+        <div className="spot-list">
+          {spots.map((spot) => (
+            <div key={spot.id} className="spot-tile" data-testid="spot-tile">
+              <Link to={`/spots/${spot.id}`} className="spot-tile-link" data-testid="spot-link">
+                <img src={spot.previewImage} alt={spot.name} className="thumbnail" data-testid="spot-thumbnail-image" />
+                <div className="spot-info">
+                  <p data-testid="spot-city">{spot.city}, {spot.state}</p>
+                  <div className="rating">
+                    <FaStar />
+                    <span data-testid="spot-rating">{spot.avgRating !== null ? Number(spot.avgRating).toFixed(1) : "New"}</span>
+                  </div>
+                </div>
+                <p className="price" data-testid="spot-price">${spot.price} / night</p>
+              </Link>
+              <div className="spot-actions">
+                <Link to={`/spots/${spot.id}/edit`}>
+                  <button>Update</button>
+                </Link>
+                <button onClick={() => handleDelete(spot.id)}>Delete</button>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
-        <p>You have no spots yet.</p>
+        <div>
+          <p>You have not created any spots yet.</p>
+          <Link to="/spots/new">
+            <button>Create a New Spot</button>
+          </Link>
+        </div>
       )}
     </div>
   );

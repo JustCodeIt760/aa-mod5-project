@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import './ReviewFormModal.css';
 function ReviewFormModal({ onClose, onSubmit, spotId }) {
   const [review, setReview] = useState('');
   const [stars, setStars] = useState(1);
@@ -57,20 +57,24 @@ function ReviewFormModal({ onClose, onSubmit, spotId }) {
             placeholder="Leave your review here..."
             required
           />
-          <div className="star-rating">
-            <p>Stars</p>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span
-                key={star}
-                onClick={() => setStars(star)}
-                onMouseEnter={() => setHoverRating(star)}
-                onMouseLeave={() => setHoverRating(0)}
-                data-testid="create-a-review-clickable-star"
-                style={{ cursor: 'pointer', color: (hoverRating || stars) >= star ? 'gold' : 'gray' }}
-              >
-                ★
-              </span>
-            ))}
+          <div className="star-rating-wrapper">
+            <div className="star-rating">
+              <div className="stars-container">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    onClick={() => setStars(star)}
+                    onMouseEnter={() => setHoverRating(star)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    data-testid="create-a-review-clickable-star"
+                    style={{ cursor: 'pointer', color: (hoverRating || stars) >= star ? 'gold' : 'gray' }}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+              <p>Stars</p>
+            </div>
           </div>
           <button 
             type="submit" 
