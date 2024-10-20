@@ -324,54 +324,60 @@ router.get("/:spotId", async (req, res) => {
 });
 
 router.post("/", requireAuth, async (req, res) => {
-  const { address, city, state, country, lat, lng, name, description, price } =
-    req.body;
+  const { address, city, state, country, lat, lng, name, description, price } = req.body;
 
-  const spot = {
-    ownerId: req.user.id,
-    address,
-    city,
-    state,
-    country,
-    lat,
-    lng,
-    name,
-    description,
-    price,
-  };
-  const errorOptions = {
-    address: "Street address is required",
-    city: "City is required",
-    state: "State is required",
-    country: "Country is required",
-    lat: "Latitude must be within -90 and 90",
-    lng: "Longitude must be within -180 and 180",
-    name: "Name is required",
-    nameLength: "Name must be less than 50 characters",
-    description: "Description is required",
-    price: "Price per day must be a positive number",
-  };
-  const errorsObj = {};
-
-  for (item in spot) {
-    if (spot[item] === undefined) {
-      errorsObj[item] = errorOptions[item];
-    }
-  }
-  if (spot.name) {
-    if (spot.name.length >= 50) {
-      errorsObj.name = errorOptions.nameLength;
-    }
+  if (!lat || !lng) {
+    return res.status(400).json({
+      message: "Bad Request",
+      errors: {
+        lat: "Latitude is required",
+        lng: "Longitude is required"
+      }
+    });
   }
 
-  if (Object.entries(errorsObj).length > 0) {
-    const responseError = {};
-    responseError.message = "Bad Request";
-    responseError.errors = errorsObj;
-    return res.status(400).json(responseError);
+  const numLat = parseFloat(lat);
+  const numLng = parseFloat(lng);
+
+  if (isNaN(numLat) || numLat < -90 || numLat > 90) {
+    return res.status(400).json({
+      message: "Bad Request",
+      errors: {
+        lat: "Latitude must be a number between -90 and 90"
+      }
+    });
   }
-  const addedSpot = await Spot.create(spot);
-  res.status(201).json(addedSpot);
+
+  if (isNaN(numLng) || numLng < -180 || numLng > 180) {
+    return res.status(400).json({
+      message: "Bad Request",
+      errors: {
+        lng: "Longitude must be a number between -180 and 180"
+      }
+    });
+  }
+
+  try {
+    const newSpot = await Spot.create({
+      ownerId: req.user.id,
+      address,
+      city,
+      state,
+      country,
+      lat: numLat,
+      lng: numLng,
+      name,
+      description,
+      price
+    });
+
+    res.status(201).json(newSpot);
+  } catch (error) {
+    res.status(400).json({
+      message: "Bad Request",
+      errors: error.errors.map(e => e.message)
+    });
+  }
 });
 
 router.put("/:spotId", requireAuth, async (req, res) => {
