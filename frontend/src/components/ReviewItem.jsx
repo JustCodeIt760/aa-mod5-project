@@ -22,7 +22,6 @@ function ReviewItem({ review, onDelete }) {
     setShowModal(false);
   };
 
-  console.log('Review:', review);
 
   return (
     <div className="review" data-testid="review-list">

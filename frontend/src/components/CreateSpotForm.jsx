@@ -97,7 +97,6 @@ function CreateSpotForm() {
         const newSpot = await response.json();
         navigate(`/spots/${newSpot.id}`);
       } catch (error) {
-        console.error('Error creating spot:', error);
         setErrors({ api: 'Failed to create spot. Please try again.' });
       }
     }

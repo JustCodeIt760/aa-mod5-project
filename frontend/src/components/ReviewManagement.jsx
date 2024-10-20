@@ -27,10 +27,8 @@ function ReviewManagement() {
       if (response.ok) {
         setReviews(reviews.filter(review => review.id !== reviewId));
       } else {
-        console.error('Failed to delete review');
       }
     } catch (error) {
-      console.error('Error deleting review:', error);
     }
   };
 

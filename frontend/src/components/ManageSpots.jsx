@@ -37,7 +37,6 @@ function ManageSpots() {
         const data = await response.json();
         setSpots(data.Spots || []);
       } catch (error) {
-        console.error('Error fetching user spots:', error);
         setError(error.message);
       } finally {
         setIsLoading(false);
@@ -52,7 +51,6 @@ function ManageSpots() {
   };
 
   const handleDelete = (spotId) => {
-    console.log(`Attempting to delete spot with ID: ${spotId}`); // Debugging line
     setSpotToDelete(spotId);
     setShowModal(true);
   };
@@ -69,13 +67,10 @@ function ManageSpots() {
         },
       });
       if (response.ok) {
-        console.log(`Spot with ID: ${spotToDelete} deleted successfully`); // Debugging line
         setSpots(spots.filter(spot => spot.id !== spotToDelete));
       } else {
-        console.error('Failed to delete spot');
       }
     } catch (error) {
-      console.error('Error deleting spot:', error);
     } finally {
       setShowModal(false);
       setSpotToDelete(null);

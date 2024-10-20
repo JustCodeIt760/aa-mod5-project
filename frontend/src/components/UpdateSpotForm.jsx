@@ -52,7 +52,6 @@ function UpdateSpotForm() {
           images: spotData.SpotImages?.map(img => img.url) || ['', '', '', '', ''],
         });
       } catch (error) {
-        console.error('Error fetching spot data:', error);
         setErrors({ api: 'Failed to fetch spot data. Please try again.' });
       }
     };
@@ -117,7 +116,6 @@ function UpdateSpotForm() {
         const updatedSpot = await response.json();
         navigate(`/spots/${updatedSpot.id}`);
       } catch (error) {
-        console.error('Error updating spot:', error);
         setErrors({ api: 'Failed to update spot. Please try again.' });
       }
     }

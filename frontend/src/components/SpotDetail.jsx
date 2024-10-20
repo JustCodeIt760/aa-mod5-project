@@ -38,15 +38,11 @@ function SpotDetail() {
         const reviewsResponse = await fetch(`/api/spots/${id}/reviews`);
         const spotData = await spotResponse.json();
         const reviewsData = await reviewsResponse.json();
-        
-        console.log('Spot data:', spotData);
-        console.log('Reviews data:', reviewsData);
+
         
         setSpot(spotData);
         setReviews(reviewsData.Reviews);
-        console.log("Reviews data:", reviewsData.Reviews); // Add this line
       } catch (error) {
-        console.error('Error fetching spot details:', error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -95,10 +91,8 @@ function SpotDetail() {
       if (response.ok) {
         setReviews(reviews.filter(review => review.id !== reviewId));
       } else {
-        console.error('Failed to delete review');
       }
     } catch (error) {
-      console.error('Error deleting review:', error);
     }
   };
 
@@ -119,11 +113,6 @@ function SpotDetail() {
   const userHasReviewed = currentUser && reviews.some(review => review.userId === currentUser.id);
   const canPostReview = currentUser && currentUser.id !== spot.Owner.id && !userHasReviewed;
 
-  console.log('canPostReview:', canPostReview);
-
-  // Add this just before the return statement
-  console.log('Current user:', currentUser);
-  console.log('Can post review:', canPostReview);
 
   // Format the rating
   const formattedRating = avgRating !== 'New' ? `★${Number(avgRating).toFixed(1)}` : 'New';
@@ -131,7 +120,6 @@ function SpotDetail() {
   const hasReviews = numReviews > 0;
   const ratingDisplay = hasReviews ? `★${Number(avgRating).toFixed(1)}` : 'New';
 
-  console.log('Reviews:', reviews);
 
   return (
     <div className="spot-detail">

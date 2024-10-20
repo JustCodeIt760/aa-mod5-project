@@ -63,7 +63,6 @@ router.post(
         url: newImage.url,
       });
     } catch (err) {
-      console.error(err);
       res.status(500).json({ message: "Server error", errors: err.message });
     }
   }
@@ -176,7 +175,6 @@ router.put(
         updatedAt: reviewToUpdate.updatedAt,
       });
     } catch (err) {
-      console.error(err);
       res.status(500).json({ message: "Server error" });
     }
   }
@@ -202,7 +200,6 @@ router.delete("/:reviewId", requireAuth, async (req, res) => {
 
     res.status(200).json({ message: "Successfully deleted" });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });

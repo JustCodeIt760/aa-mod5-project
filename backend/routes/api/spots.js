@@ -158,7 +158,6 @@ router.get("/", async (req, res) => {
           ],
         ],
       },
-      logging: console.log, // Add this line to log the query
     });
 
     // Format the response data
@@ -183,7 +182,6 @@ router.get("/", async (req, res) => {
         previewImage: spot.dataValues.previewImage || null,
       };
     });
-    console.log(req.query);
 
     // Return the response
     return res.json({
@@ -193,7 +191,6 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     // Log the error for debugging
-    console.error("Error fetching spots:", error);
 
     // Return a 500 Internal Server Error with a generic message
     return res.status(500).json({
@@ -235,7 +232,6 @@ router.get("/current", requireAuth, async (req, res) => {
 
     return res.json({ Spots: formattedSpots });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: "Server error" });
   }
 });
@@ -363,7 +359,6 @@ router.post("/", requireAuth, async (req, res) => {
 
     res.status(201).json(spotWithImages);
   } catch (error) {
-    console.error('Error creating spot:', error);
     res.status(400).json({ errors: error.errors.map(e => e.message) });
   }
 });
@@ -671,7 +666,6 @@ router.get("/:spotId/reviews", async (req, res) => {
 
     res.status(200).json({ Reviews: formattedReviews });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server error", errors: err.message });
   }
 });
@@ -755,7 +749,6 @@ router.post(
 
       res.status(201).json(formattedReview);
     } catch (err) {
-      console.error(err);
       res.status(500).json({ message: "Server error", errors: err.message });
     }
   }
@@ -787,7 +780,6 @@ router.delete("/spot-images/:imageId", requireAuth, async (req, res) => {
 
     res.status(200).json({ message: "Successfully deleted" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });

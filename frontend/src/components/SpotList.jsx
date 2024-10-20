@@ -26,7 +26,6 @@ function SpotList() {
           throw new Error('Data format is incorrect');
         }
       } catch (error) {
-        console.error('Error fetching spots:', error);
         setError(error.message);
       } finally {
         setLoading(false);

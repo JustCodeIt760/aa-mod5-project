@@ -24,7 +24,6 @@ module.exports = {
     });
 
     if (demoSpots.length === 0) {
-      console.error("No spots found. Ensure the spots exist in the database.");
       return;
     }
 
