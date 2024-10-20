@@ -35,52 +35,52 @@ router.post("/", validateSignup, async (req, res) => {
   const { firstName, lastName, email, username, password } = req.body;
 
   // Check if a user with the same email or username already exists
-  const existingUser = await User.findOne({
-    where: {
-      [Op.or]: [{ email }, { username }],
-    },
-  });
+  const existingUserEmail = await User.findOne({ where: { email } });
+  const existingUserUsername = await User.findOne({ where: { username } });
 
-  if (existingUser) {
-    const errors = {};
-    if (existingUser.username === username) {
-      errors.username = "User with that username already exists";
-    } else {
-      errors.email = "User with that email already exists";
-    }
-    console.log(existingUser);
-    return res.status(500).json({
+  const errors = {};
+  if (existingUserEmail) {
+    errors.email = "User with that email already exists";
+  }
+  if (existingUserUsername) {
+    errors.username = "User with that username already exists";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return res.status(403).json({
       message: "User already exists",
       errors,
     });
   }
 
-  // Hash the password
-  const hashedPassword = bcrypt.hashSync(password);
+  // If no existing user, proceed with user creation
+  try {
+    const hashedPassword = bcrypt.hashSync(password);
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      username,
+      hashedPassword,
+    });
 
-  // Create the new user
-  const user = await User.create({
-    firstName,
-    lastName,
-    email,
-    username,
-    hashedPassword,
-  });
+    const safeUser = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      username: user.username,
+    };
 
-  // Prepare the response
-  const safeUser = {
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    username: user.username,
-  };
-
-  // Set the token cookie
-  await setTokenCookie(res, user);
-
-  // Send response with status code 201
-  return res.status(201).json({ user: safeUser });
+    await setTokenCookie(res, user);
+    return res.status(201).json({ user: safeUser });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Server error",
+      errors: { server: "An unexpected error occurred" },
+    });
+  }
 });
 
 module.exports = router;

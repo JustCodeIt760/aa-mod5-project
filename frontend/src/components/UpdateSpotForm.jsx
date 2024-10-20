@@ -74,6 +74,7 @@ function UpdateSpotForm() {
       });
 
       if (response.ok) {
+        console.log('Update successful, navigating to detail page');
         navigate(`/spots/${spotId}`); // Redirect to the spot's detail page
       } else {
         const errorData = await response.json();
@@ -92,6 +93,7 @@ function UpdateSpotForm() {
         <input
           id="name"
           name="name"
+          placeholder="Name of your spot" // Ensure this matches the test
           value={formData.name}
           onChange={handleChange}
           required
@@ -162,6 +164,7 @@ function UpdateSpotForm() {
         <input
           id="price"
           name="price"
+          placeholder="Price per night (USD)" // Ensure this matches the test
           value={formData.price}
           onChange={handleChange}
           required
@@ -172,6 +175,7 @@ function UpdateSpotForm() {
         <textarea
           id="description"
           name="description"
+          placeholder="Please write at least 30 characters" // Ensure this matches the test
           value={formData.description}
           onChange={handleChange}
           required

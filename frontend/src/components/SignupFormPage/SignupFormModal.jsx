@@ -15,6 +15,17 @@ function SignupFormModal() {
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
+  const isFormValid = () => {
+    return (
+      email &&
+      username.length >= 4 &&
+      firstName &&
+      lastName &&
+      password.length >= 6 &&
+      confirmPassword === password
+    );
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password === confirmPassword) {
@@ -30,7 +41,7 @@ function SignupFormModal() {
   };
 
   return (
-    <>
+    <div data-testid="sign-up-form">
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
         <label>
@@ -40,9 +51,10 @@ function SignupFormModal() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            data-testid="email-input"
           />
         </label>
-        {errors.email && <p>{errors.email}</p>}
+        {errors.email && <p data-testid="email-error-message">{errors.email}</p>}
         <label>
           Username
           <input
@@ -50,9 +62,10 @@ function SignupFormModal() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
+            data-testid="username-input"
           />
         </label>
-        {errors.username && <p>{errors.username}</p>}
+        {errors.username && <p data-testid="username-error-message">{errors.username}</p>}
         <label>
           First Name
           <input
@@ -60,6 +73,7 @@ function SignupFormModal() {
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             required
+            data-testid="first-name-input"
           />
         </label>
         {errors.firstName && <p>{errors.firstName}</p>}
@@ -70,6 +84,7 @@ function SignupFormModal() {
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             required
+            data-testid="last-name-input"
           />
         </label>
         {errors.lastName && <p>{errors.lastName}</p>}
@@ -80,6 +95,7 @@ function SignupFormModal() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            data-testid="password-input"
           />
         </label>
         {errors.password && <p>{errors.password}</p>}
@@ -90,15 +106,22 @@ function SignupFormModal() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            data-testid="confirm-password-input"
           />
         </label>
         {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
         {Object.values(errors).map((error, idx) => (
           <p key={idx}>{error}</p>
         ))}
-        <button type="submit" disabled={username.length < 4 || password.length < 6}>Sign Up</button>
+        <button
+          type="submit"
+          disabled={!isFormValid()}
+          data-testid="form-sign-up-button"
+        >
+          Sign Up
+        </button>
       </form>
-    </>
+    </div>
   );
 }
 
