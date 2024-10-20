@@ -158,24 +158,14 @@ router.get("/", async (req, res) => {
 
     // Format the response data
     const Spots = spots.map((spot) => {
+      const spotJson = spot.toJSON();
       return {
-        id: spot.id,
-        ownerId: spot.ownerId,
-        address: spot.address,
-        city: spot.city,
-        state: spot.state,
-        country: spot.country,
-        lat: parseFloat(spot.lat),
-        lng: parseFloat(spot.lng),
-        name: spot.name,
-        description: spot.description,
-        price: parseInt(spot.price),
-        createdAt: spot.createdAt,
-        updatedAt: spot.updatedAt,
-        avgRating: spot.dataValues.avgRating
-          ? parseFloat(spot.dataValues.avgRating)
-          : null,
-        previewImage: spot.dataValues.previewImage || null,
+        ...spotJson,
+        lat: parseFloat(spotJson.lat),
+        lng: parseFloat(spotJson.lng),
+        price: parseInt(spotJson.price),
+        avgRating: spotJson.avgRating ? parseFloat(spotJson.avgRating) : null,
+        previewImage: spotJson.SpotImages && spotJson.SpotImages.length > 0 ? spotJson.SpotImages[0].url : null,
       };
     });
     console.log(req.query);
@@ -323,39 +313,29 @@ router.get("/:spotId", async (req, res) => {
   res.json(spotData);
 });
 
-router.post("/", requireAuth, async (req, res) => {
+router.post("/", requireAuth, [
+  check('address').notEmpty().withMessage('Street address is required'),
+  check('city').notEmpty().withMessage('City is required'),
+  check('state').notEmpty().withMessage('State is required'),
+  check('country').notEmpty().withMessage('Country is required'),
+  check('lat').isFloat({ min: -90, max: 90 }).withMessage('Latitude must be between -90 and 90'),
+  check('lng').isFloat({ min: -180, max: 180 }).withMessage('Longitude must be between -180 and 180'),
+  check('name').notEmpty().isLength({ max: 50 }).withMessage('Name must be less than 50 characters'),
+  check('description').notEmpty().withMessage('Description is required'),
+  check('price').isFloat({ min: 0 }).withMessage('Price per day must be a positive number'),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      message: "Bad Request",
+      errors: errors.array().reduce((acc, error) => {
+        acc[error.param] = error.msg;
+        return acc;
+      }, {})
+    });
+  }
+
   const { address, city, state, country, lat, lng, name, description, price } = req.body;
-
-  if (!lat || !lng) {
-    return res.status(400).json({
-      message: "Bad Request",
-      errors: {
-        lat: "Latitude is required",
-        lng: "Longitude is required"
-      }
-    });
-  }
-
-  const numLat = parseFloat(lat);
-  const numLng = parseFloat(lng);
-
-  if (isNaN(numLat) || numLat < -90 || numLat > 90) {
-    return res.status(400).json({
-      message: "Bad Request",
-      errors: {
-        lat: "Latitude must be a number between -90 and 90"
-      }
-    });
-  }
-
-  if (isNaN(numLng) || numLng < -180 || numLng > 180) {
-    return res.status(400).json({
-      message: "Bad Request",
-      errors: {
-        lng: "Longitude must be a number between -180 and 180"
-      }
-    });
-  }
 
   try {
     const newSpot = await Spot.create({
@@ -364,18 +344,19 @@ router.post("/", requireAuth, async (req, res) => {
       city,
       state,
       country,
-      lat: numLat,
-      lng: numLng,
+      lat: parseFloat(lat),
+      lng: parseFloat(lng),
       name,
       description,
-      price
+      price: parseFloat(price)
     });
 
     res.status(201).json(newSpot);
   } catch (error) {
+    console.error(error);
     res.status(400).json({
       message: "Bad Request",
-      errors: error.errors.map(e => e.message)
+      errors: error.errors ? error.errors.map(e => e.message) : [error.message]
     });
   }
 });
