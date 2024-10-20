@@ -137,27 +137,25 @@ router.get("/", async (req, res) => {
       offset,
       attributes: {
         include: [
-          // Calculate average rating using a subquery
           [
-            sequelize.literal(`(
-              SELECT ROUND(AVG("Reviews"."stars"), 1)
-              FROM ${reviewTable} AS "Reviews"
-              WHERE "Reviews"."spotId" = "Spot"."id"
-            )`),
-            "avgRating",
-          ],
-          // Include previewImage using a subquery
-          [
-            sequelize.literal(`(
-              SELECT "url"
-              FROM ${spotImageTable}
-              WHERE "${spotImageTable}"."spotId" = "Spot"."id" AND "${spotImageTable}"."preview" = true
-              LIMIT 1
-            )`),
-            "previewImage",
+            sequelize.fn('ROUND', sequelize.fn('AVG', sequelize.col('Reviews.stars')), 1),
+            'avgRating'
           ],
         ],
       },
+      include: [
+        {
+          model: Review,
+          attributes: [],
+        },
+        {
+          model: SpotImage,
+          attributes: ['url'],
+          where: { preview: true },
+          required: false,
+        },
+      ],
+      group: ['Spot.id', 'SpotImages.id'],
     });
 
     // Format the response data
@@ -179,7 +177,7 @@ router.get("/", async (req, res) => {
         avgRating: spot.dataValues.avgRating
           ? parseFloat(spot.dataValues.avgRating)
           : null,
-        previewImage: spot.dataValues.previewImage || null,
+        previewImage: spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
       };
     });
 
