@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaStar } from 'react-icons/fa'; // Import the star icon
 import { Link, useLocation } from 'react-router-dom'; // Import Link from react-router-dom
 import { useSelector } from 'react-redux';
+import './SpotList.css';
 
 function SpotList() {
   const [spots, setSpots] = useState([]);
