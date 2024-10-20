@@ -19,7 +19,7 @@ function getCsrfToken() {
 }
 
 function ManageSpots() {
-  const [spots, setSpots] = useState(null);
+  const [spots, setSpots] = useState([]); // Initialize as an empty array
   const [showModal, setShowModal] = useState(false);
   const [spotToDelete, setSpotToDelete] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +35,6 @@ function ManageSpots() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log('Fetched spots:', data);
         setSpots(data.Spots || []);
       } catch (error) {
         console.error('Error fetching user spots:', error);
@@ -94,20 +93,20 @@ function ManageSpots() {
   return (
     <div className="manage-spots" data-testid="user-spots">
       <h1>Manage Spots</h1>
-      {spots && spots.length > 0 ? (
+      {spots.length > 0 ? (
         spots.map((spot) => (
-          <div key={spot.id} className="spot-tile">
-            <Link to={`/spots/${spot.id}`} className="spot-tile-link">
-              <img src={spot.previewImage} alt={spot.name} className="thumbnail" />
+          <div key={spot.id} className="spot-tile" data-testid="spot-tile">
+            <Link to={`/spots/${spot.id}`} className="spot-tile-link" data-testid="spot-link">
+              <img src={spot.previewImage} alt={spot.name} className="thumbnail" data-testid="spot-thumbnail-image" />
               <div className="spot-info">
                 <h2>{spot.name}</h2>
-                <p>{spot.city}, {spot.state}</p>
+                <p data-testid="spot-city">{spot.city}, {spot.state}</p>
                 <div className="rating">
-                  <FaStar /> {/* Star icon */}
-                  <span>{spot.avgRating !== null ? Number(spot.avgRating).toFixed(1) : "New"}</span>
+                  <FaStar />
+                  <span data-testid="spot-rating">{spot.avgRating !== null ? Number(spot.avgRating).toFixed(1) : "New"}</span>
                 </div>
               </div>
-              <p className="price">${spot.price} per night</p>
+              <p className="price" data-testid="spot-price">${spot.price} per night</p>
             </Link>
             <div className="spot-actions">
               <button onClick={() => handleUpdate(spot.id)}>Update</button>
@@ -118,7 +117,9 @@ function ManageSpots() {
       ) : (
         <div>
           <p>You have not created any spots yet.</p>
-          <Link to="/spots/new">Create a New Spot</Link>
+          <button>
+            <Link to="/spots/new">Create a New Spot</Link>
+          </button>
         </div>
       )}
       {showModal && (
