@@ -25,12 +25,12 @@ function ReviewItem({ review, onDelete }) {
   console.log('Review:', review);
 
   return (
-    <div className="review">
+    <div className="review" data-testid="review-list">
       <h3>{review.User && review.User.firstName}</h3>
       <p>{new Date(review.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
-      <p>{review.review}</p>
+      <p data-testid="review-text">{review.review}</p>
       {currentUser && currentUser.id === review.userId && (
-        <button onClick={handleDeleteClick}>Delete</button>
+        <button onClick={handleDeleteClick} role="button" name="Delete">Delete</button>
       )}
       {showModal && (
         <ReviewConfirmationModal

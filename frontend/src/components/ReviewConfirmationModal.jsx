@@ -3,7 +3,7 @@ import './ReviewConfirmationModal.css';
 
 function ReviewConfirmationModal({ onClose, onConfirm }) {
   return (
-    <div className="modal">
+    <div className="modal" data-testid="delete-review-modal">
       <div className="modal-content">
         <h2>Confirm Delete</h2>
         <p>Are you sure you want to delete this review?</p>
