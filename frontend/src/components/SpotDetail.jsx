@@ -102,8 +102,9 @@ function SpotDetail() {
   if (error) return <div>Error: {error}</div>;
   if (!spot) return <div>No spot found</div>;
 
-  // Get the first image and the rest of the images
-  const [firstImage, ...otherImages] = spot.SpotImages || [];
+  // Ensure you have the correct number of images
+  const firstImage = spot.SpotImages && spot.SpotImages.length > 0 ? spot.SpotImages[0] : null;
+  const otherImages = spot.SpotImages ? spot.SpotImages.slice(1) : [];
 
   // Fetch reviews and calculate the number of reviews
   const numReviews = reviews.length; // Assuming `reviews` is an array of review objects
@@ -150,12 +151,12 @@ function SpotDetail() {
 
       <div className="spot-info-container">
         <div className="spot-info-left">
-          <div data-testid="spot-host">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</div>
+          <h2 data-testid="spot-host">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h2>
           <p data-testid="spot-description">{spot.description}</p>
         </div>
         <div data-testid="spot-callout-box" className="callout-box">
-          <p role="paragraph">
-            <span data-testid="spot-price">${spot.price} / night</span>
+          <p>
+            <span data-testid="spot-price">${spot.price} night</span>
             <br />
             <span data-testid="spot-rating">{ratingDisplay}</span>
             {hasReviews && (
