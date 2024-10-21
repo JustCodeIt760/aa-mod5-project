@@ -263,7 +263,9 @@ function CreateSpotForm() {
           </div>
         ))}
       </div>
-      <button type="submit" data-testid="create-new-spot-button">Create Spot</button>
+      <button type="submit" role="button" aria-label="Create Spot">
+        Create Spot
+      </button>
     </form>
   );
 }
