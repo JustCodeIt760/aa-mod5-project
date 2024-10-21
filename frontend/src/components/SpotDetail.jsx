@@ -124,7 +124,7 @@ function SpotDetail() {
 
   return (
     <div className="spot-detail">
-      <h1 data-testid="spot-heading">{spot.name}</h1>
+      <h1 data-testid="spot-name">{spot.name}</h1>
       <p data-testid="spot-detail-page-location">{`${spot.city}, ${spot.state}, ${spot.country}`}</p>
       
       <div className="spot-images">
@@ -149,12 +149,8 @@ function SpotDetail() {
         </div>
       </div>
 
-      <div className="spot-info-container">
-        <div className="spot-info-left">
-          <h2 data-testid="spot-host">Hosted by {spot.Owner.firstName} {spot.Owner.lastName}</h2>
-          <p data-testid="spot-description">{spot.description}</p>
-        </div>
-        <div data-testid="spot-callout-box" className="callout-box">
+      <div data-testid="spot-callout-box" className="callout-box">
+        {spot ? (
           <p>
             <span data-testid="spot-price">${spot.price} night</span>
             <br />
@@ -166,13 +162,15 @@ function SpotDetail() {
               </>
             )}
           </p>
-          <button 
-            data-testid="reserve-button"
-            onClick={() => alert('Feature coming soon')}
-          >
-            Reserve
-          </button>
-        </div>
+        ) : (
+          <p>Loading spot details...</p>
+        )}
+        <button 
+          data-testid="reserve-button"
+          onClick={handleReserveClick}
+        >
+          Reserve
+        </button>
       </div>
       <h2 data-testid="reviews-heading">
         <span data-testid="spot-rating">{ratingDisplay}</span>
@@ -198,7 +196,7 @@ function SpotDetail() {
             Post Your Review
           </button>
         )}
-        <div className="reviews-list">
+        <div className="reviews-list" data-testid="review-list">
           {reviews.length > 0 ? (
             reviews.map(review => (
               <ReviewItem key={review.id} review={review} onDelete={deleteReview} />
