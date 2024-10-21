@@ -84,13 +84,18 @@ function CreateSpotForm() {
       try {
         const csrfToken = getCsrfToken(); // Retrieve CSRF token
 
+        // Create a copy of formData and remove lat/lng if they are empty
+        const payload = { ...formData };
+        if (!payload.lat) delete payload.lat;
+        if (!payload.lng) delete payload.lng;
+
         const response = await fetch('/api/spots', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'X-CSRF-Token': csrfToken, // Include CSRF token in headers
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
