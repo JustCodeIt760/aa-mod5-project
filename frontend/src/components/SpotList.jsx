@@ -24,6 +24,7 @@ function SpotList() {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        console.log("Fetched spots data:", data);
         if (Array.isArray(data.Spots)) {
           setSpots(data.Spots);
         } else {
@@ -63,7 +64,16 @@ function SpotList() {
           <div key={spot.id} data-testid="spot-tile">
             <Link to={`/spots/${spot.id}`} className="spot-tile-link" data-testid="spot-link">
               <div className="spot-tile-content" title={spot.name} data-testid="spot-tooltip">
-                <img src={spot.previewImage} alt={spot.name} className="thumbnail" data-testid="spot-thumbnail-image" />
+                <img 
+                  src={spot.previewImage || 'path/to/fallback/image.jpg'} 
+                  alt={spot.name} 
+                  className="thumbnail" 
+                  data-testid="spot-thumbnail-image"
+                  onError={(e) => {
+                    console.error(`Failed to load image for spot ${spot.id}:`, e);
+                    e.target.src = 'path/to/fallback/image.jpg';
+                  }}
+                />
                 <div className="spot-info">
                   <p data-testid="spot-city">{spot.city}, {spot.state}</p>
                   <div className="rating">
