@@ -344,8 +344,8 @@ router.post("/", requireAuth, [
       city,
       state,
       country,
-      lat: parseFloat(lat),
-      lng: parseFloat(lng),
+      lat: lat ? parseFloat(lat) : null,
+      lng: lng ? parseFloat(lng) : null,
       name,
       description,
       price: parseFloat(price)
