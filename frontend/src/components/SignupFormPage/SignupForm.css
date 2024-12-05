@@ -1,35 +1,31 @@
 .signup-modal {
   padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+  margin: 0 auto;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  width: 300px;
-  margin: 0 auto;
+  gap: 12px;
   padding: 20px;
+  width: 300px;
 }
 
-.error-message {
-  color: #FF385C;
-  font-size: 12px;
-  font-weight: 500;
-  margin: 4px 0;
-}
-
-.error-message.above-input {
-  margin-bottom: -4px;
-}
-
-.error-input {
-  border-color: #FF385C;
+h1 {
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 label {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #222222;
+  margin-bottom: 8px;
 }
 
 input {
@@ -46,11 +42,14 @@ input:focus {
 
 button {
   margin-top: 15px;
-  padding: 10px;
-  background-color: #0077b6;
+  padding: 12px;
+  background-color: #FF385C;
   color: white;
   border: none;
   cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 button:hover {
