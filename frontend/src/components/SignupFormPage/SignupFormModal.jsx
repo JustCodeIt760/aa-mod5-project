@@ -55,18 +55,16 @@ function SignupFormModal() {
 
     setErrors({});
     dispatch(sessionActions.signup({ email, username, firstName, lastName, password }))
-      .then((response) => {
+      .then(async (response) => {
         if (response.ok) {
           closeModal();
-        }
-        if (response.status === 401) {
-          setErrors({ credential: "The provided credentials were invalid" });
-        }
-        if (response.status === 500) {
-          setErrors({
-            username: 'User with that username already exists',
-            email: 'User with that email already exists'
-          });
+        } else {
+          const data = await response.json();
+          if (response.status === 401) {
+            setErrors({ credential: "The provided credentials were invalid" });
+          } else if (response.status === 500) {
+            setErrors(data.errors || {});
+          }
         }
       });
   };
