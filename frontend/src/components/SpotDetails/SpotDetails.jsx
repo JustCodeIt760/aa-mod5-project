@@ -82,6 +82,9 @@ function SpotDetails() {
     alert("Feature coming soon");
   };
 
+  // Sort reviews by creation date in descending order
+  const sortedReviews = [...reviews].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   if (isLoading || !spot) return <div>Loading...</div>;
 
   return (
@@ -147,9 +150,9 @@ function SpotDetails() {
           />
         )}
 
-        {reviews.length > 0 ? (
+        {sortedReviews.length > 0 ? (
           <div className="reviews-list">
-            {reviews.map(review => (
+            {sortedReviews.map(review => (
               <div key={review.id} className="review-item">
                 <div className="review-header">
                   <h3>{review.User.firstName}</h3>
