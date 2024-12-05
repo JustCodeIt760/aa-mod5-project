@@ -96,12 +96,24 @@ function SpotDetails() {
 
       <div className="spot-images">
         <div className="main-image">
-          <img src={spot.SpotImages[0]?.url || '/favicon.ico'} alt={spot.name} />
+          <img
+            src={spot.SpotImages[0]?.url || "https://i.ibb.co/zStVLWf/pexels-photo-106399.jpg"}
+            alt={spot.name}
+            onError={(e) => {
+              e.target.src = "https://i.ibb.co/zStVLWf/pexels-photo-106399.jpg";
+            }}
+          />
         </div>
         <div className="secondary-images">
           {spot.SpotImages.slice(1, 5).map((image, index) => (
             <div key={image.id} className="secondary-image">
-              <img src={image.url} alt={`${spot.name} ${index + 2}`} />
+              <img
+                src={image.url}
+                alt={`${spot.name} ${index + 2}`}
+                onError={(e) => {
+                  e.target.src = "https://i.ibb.co/zStVLWf/pexels-photo-106399.jpg";
+                }}
+              />
             </div>
           ))}
         </div>
