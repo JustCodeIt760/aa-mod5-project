@@ -14,24 +14,21 @@ function LoginFormModal() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors({});
-    return dispatch(sessionActions.login({ credential, password }))
+
+    dispatch(sessionActions.login({ credential, password }))
       .then((response) => {
         if (response.ok) {
           closeModal();
         }
-      })
-      .catch(async (res) => {
-        const data = await res.json();
-        console.log(data);
-        if (res.status === 401) {
+        if (response.status === 401) {
           setErrors({ credential: "The provided credentials were invalid" });
         }
-      });
+      })
   };
 
   const handleDemoLogin = (e) => {
     e.preventDefault();
-    return dispatch(sessionActions.login({
+      return dispatch(sessionActions.login({
       credential: 'Demo-lition',
       password: 'password'
     }))
