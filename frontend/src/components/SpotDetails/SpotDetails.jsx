@@ -18,11 +18,11 @@ function SpotDetails() {
         // Fetch spot details
         const spotResponse = await fetch(`/api/spots/${spotId}`);
         const spotData = await spotResponse.json();
-        
+
         // Fetch reviews
         const reviewsResponse = await fetch(`/api/spots/${spotId}/reviews`);
         const reviewsData = await reviewsResponse.json();
-        
+
         // Fetch current user
         const userResponse = await fetch('/api/session');
         const userData = await userResponse.json();
@@ -40,7 +40,7 @@ function SpotDetails() {
     fetchData();
   }, [spotId]);
 
-  const hasUserReviewed = currentUser && reviews.some(review => 
+  const hasUserReviewed = currentUser && reviews.some(review =>
     review.User.id === currentUser.id
   );
 
@@ -51,7 +51,7 @@ function SpotDetails() {
       // Fetch updated spot details to get new rating
       const spotResponse = await fetch(`/api/spots/${spotId}`);
       const updatedSpot = await spotResponse.json();
-      
+
       // Fetch updated reviews to get them in correct order
       const reviewsResponse = await fetch(`/api/spots/${spotId}/reviews`);
       const reviewsData = await reviewsResponse.json();
@@ -59,7 +59,7 @@ function SpotDetails() {
       // Update both spot and reviews state
       setSpot(updatedSpot);
       setReviews(reviewsData.Reviews);
-      
+
     } catch (error) {
       console.error('Error updating after review:', error);
     }
@@ -68,7 +68,7 @@ function SpotDetails() {
   const handleReviewDelete = (deletedReviewId) => {
     setReviews(reviews.filter(review => review.id !== deletedReviewId));
     const updatedNumReviews = spot.numReviews - 1;
-    const updatedAvgRating = updatedNumReviews === 0 ? 0 : 
+    const updatedAvgRating = updatedNumReviews === 0 ? 0 :
       ((spot.avgStarRating * spot.numReviews) - reviews.find(r => r.id === deletedReviewId).stars) / updatedNumReviews;
 
     setSpot(prevSpot => ({
@@ -76,6 +76,10 @@ function SpotDetails() {
       numReviews: updatedNumReviews,
       avgStarRating: updatedAvgRating
     }));
+  };
+
+  const handleReserveClick = () => {
+    alert("Feature coming soon");
   };
 
   if (isLoading || !spot) return <div>Loading...</div>;
@@ -118,25 +122,25 @@ function SpotDetails() {
               )}
             </div>
           </div>
-          <button className="reserve-button">Reserve</button>
+          <button className="reserve-button" onClick={handleReserveClick}>Reserve</button>
         </div>
       </div>
 
       <div className="reviews-section">
         <h2>
-          ★ {spot.avgStarRating?.toFixed(1) || 'New'} 
+          ★ {spot.avgStarRating?.toFixed(1) || 'New'}
           {spot.numReviews > 0 && (
             <span> · {spot.numReviews} {spot.numReviews === 1 ? 'review' : 'reviews'}</span>
           )}
         </h2>
-        
-        {currentUser && 
-         !hasUserReviewed && 
+
+        {currentUser &&
+         !hasUserReviewed &&
          !isOwner && (
           <OpenModalButton
             buttonText="Post Your Review"
-            modalComponent={<CreateReviewModal 
-              spotId={spotId} 
+            modalComponent={<CreateReviewModal
+              spotId={spotId}
               onReviewSubmit={handleReviewSubmit}
             />}
             className="post-review-button"
@@ -150,9 +154,9 @@ function SpotDetails() {
                 <div className="review-header">
                   <h3>{review.User.firstName}</h3>
                   <span className="review-date">
-                    {new Date(review.createdAt).toLocaleDateString('en-US', { 
-                      month: 'long', 
-                      year: 'numeric' 
+                    {new Date(review.createdAt).toLocaleDateString('en-US', {
+                      month: 'long',
+                      year: 'numeric'
                     })}
                   </span>
                 </div>
@@ -162,8 +166,8 @@ function SpotDetails() {
                   <OpenModalButton
                     buttonText="Delete"
                     modalComponent={
-                      <DeleteReviewModal 
-                        reviewId={review.id} 
+                      <DeleteReviewModal
+                        reviewId={review.id}
                         onReviewDelete={handleReviewDelete}
                       />
                     }
@@ -174,7 +178,7 @@ function SpotDetails() {
             ))}
           </div>
         ) : (
-          currentUser && 
+          currentUser &&
           !isOwner && (
             <p className="no-reviews">Be the first to post a review!</p>
           )

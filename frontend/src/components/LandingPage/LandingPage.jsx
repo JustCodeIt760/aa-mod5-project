@@ -36,16 +36,17 @@ function LandingPage() {
     <div className="landing-page">
       <div className="spots-grid">
         {spots.map(spot => (
-          <div 
-            key={spot.id} 
+          <div
+            key={spot.id}
             className="spot-card"
             onClick={() => handleSpotClick(spot.id)}
             role="button"
             tabIndex={0}
+            title={spot.name}
           >
-            <img 
-              src={spot.previewImage} 
-              alt={spot.name} 
+            <img
+              src={spot.previewImage}
+              alt={spot.name}
               className="spot-image"
               onError={(e) => {
                 e.target.src = '/favicon.ico';

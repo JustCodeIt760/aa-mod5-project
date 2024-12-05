@@ -30,40 +30,82 @@ module.exports = {
 
     await SpotImage.bulkCreate(
       [
+        // Cozy SF Apartment
         {
-          spotId: demoSpots.find((spot) => spot.name === "Cozy SF Apartment")
-            .id,
-          url: "https://example.com/sf-apartment1.jpg",
+          spotId: demoSpots.find((spot) => spot.name === "Cozy SF Apartment").id,
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
           preview: true,
         },
         {
-          spotId: demoSpots.find((spot) => spot.name === "Cozy SF Apartment")
-            .id,
-          url: "https://example.com/sf-apartment2.jpg",
+          spotId: demoSpots.find((spot) => spot.name === "Cozy SF Apartment").id,
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: false,
+        },
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Cozy SF Apartment").id,
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: false,
+        },
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Cozy SF Apartment").id,
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: false,
+        },
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Cozy SF Apartment").id,
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: false,
+        },
+        // Manhattan Loft
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Manhattan Loft").id,
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: true,
+        },
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Manhattan Loft").id,
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
           preview: false,
         },
         {
           spotId: demoSpots.find((spot) => spot.name === "Manhattan Loft").id,
-          url: "https://example.com/manhattan-loft1.jpg",
-          preview: true,
-        },
-        {
-          spotId: demoSpots.find((spot) => spot.name === "Manhattan Loft").id,
-          url: "https://example.com/manhattan-loft2.jpg",
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
           preview: false,
         },
         {
-          spotId: demoSpots.find(
-            (spot) => spot.name === "Hollywood Hills Villa"
-          ).id,
+          spotId: demoSpots.find((spot) => spot.name === "Manhattan Loft").id,
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: false,
+        },
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Manhattan Loft").id,
+          url: "https://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: false,
+        },
+        // Hollywood Hills Villa
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Hollywood Hills Villa").id,
           url: "https://example.com/hollywood-villa1.jpg",
           preview: true,
         },
         {
-          spotId: demoSpots.find(
-            (spot) => spot.name === "Hollywood Hills Villa"
-          ).id,
-          url: "https://example.com/hollywood-villa2.jpg",
+          spotId: demoSpots.find((spot) => spot.name === "Hollywood Hills Villa").id,
+          url: "ttps://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: false,
+        },
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Hollywood Hills Villa").id,
+          url: "ttps://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: false,
+        },
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Hollywood Hills Villa").id,
+          url: "ttps://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          preview: false,
+        },
+        {
+          spotId: demoSpots.find((spot) => spot.name === "Hollywood Hills Villa").id,
+          url: "ttps://plus.unsplash.com/premium_photo-1661915661139-5b6a4e4a6fcc?q=80&w=967&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
           preview: false,
         },
       ],
